@@ -54,9 +54,15 @@ describe("Agnes AI models", () => {
 			expect(model.reasoning).toBe(false);
 		});
 
-		it("no compat settings", () => {
+		it("has auto-detected compat settings", () => {
 			const model = AGNES_MODELS["agnes-2.0-flash"];
-			expect(model.compat).toBeUndefined();
+			// Auto-detected compat settings for Agnes (non-standard provider)
+			expect(model.compat).toBeDefined();
+			expect((model.compat as any).supportsStore).toBe(false);
+			expect((model.compat as any).supportsDeveloperRole).toBe(false);
+			expect((model.compat as any).supportsReasoningEffort).toBe(false);
+			expect((model.compat as any).maxTokensField).toBe("max_tokens");
+			expect((model.compat as any).supportsLongCacheRetention).toBe(false);
 		});
 	});
 

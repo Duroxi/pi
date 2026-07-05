@@ -324,6 +324,8 @@ function detectOpenAICompletionsCompat(model: Model<"openai-completions">): Open
 	const isCloudflareAiGateway = provider === "cloudflare-ai-gateway" || baseUrl.includes("gateway.ai.cloudflare.com");
 	const isNvidia = provider === "nvidia" || baseUrl.includes("integrate.api.nvidia.com");
 	const isAntLing = provider === "ant-ling" || baseUrl.includes("api.ant-ling.com");
+	const isStepfun = provider === "stepfun" || provider === "stepfun-step-plan" || baseUrl.includes("api.stepfun.com");
+	const isAgnes = provider === "agnes" || baseUrl.includes("apihub.agnes-ai.com");
 	const isTogetherReasoningOnly = isTogether && TOGETHER_REASONING_ONLY_MODELS.has(model.id);
 
 	const isNonStandard =
@@ -341,10 +343,12 @@ function detectOpenAICompletionsCompat(model: Model<"openai-completions">): Open
 		baseUrl.includes("opencode.ai") ||
 		isCloudflareWorkersAI ||
 		isCloudflareAiGateway ||
-		isAntLing;
+		isAntLing ||
+		isStepfun ||
+		isAgnes;
 
 	const useMaxTokens =
-		baseUrl.includes("chutes.ai") || isMoonshot || isCloudflareAiGateway || isTogether || isNvidia || isAntLing;
+		baseUrl.includes("chutes.ai") || isMoonshot || isCloudflareAiGateway || isTogether || isNvidia || isAntLing || isStepfun || isAgnes;
 
 	const isGrok = provider === "xai" || baseUrl.includes("api.x.ai");
 	const isDeepSeek = provider === "deepseek" || baseUrl.includes("deepseek.com");
@@ -356,24 +360,26 @@ function detectOpenAICompletionsCompat(model: Model<"openai-completions">): Open
 		supportsStore: !isNonStandard,
 		supportsDeveloperRole: isOpenRouterDeveloperRoleModel || (!isNonStandard && !isOpenRouter),
 		supportsReasoningEffort:
-			!isGrok && !isZai && !isMoonshot && !isTogether && !isCloudflareAiGateway && !isNvidia && !isAntLing,
+			!isGrok && !isZai && !isMoonshot && !isTogether && !isCloudflareAiGateway && !isNvidia && !isAntLing && !isStepfun && !isAgnes,
 		supportsUsageInStreaming: true,
 		maxTokensField: useMaxTokens ? "max_tokens" : "max_completion_tokens",
 		requiresToolResultName: false,
 		requiresAssistantAfterToolResult: false,
 		requiresThinkingAsText: false,
-		requiresReasoningContentOnAssistantMessages: isDeepSeek,
+		requiresReasoningContentOnAssistantMessages: isDeepSeek || isStepfun,
 		thinkingFormat: isDeepSeek
 			? "deepseek"
-			: isZai
-				? "zai"
-				: isTogether && !isTogetherReasoningOnly
-					? "together"
-					: isAntLing
-						? "ant-ling"
-						: isOpenRouter
-							? "openrouter"
-							: "openai",
+			: isStepfun
+				? "deepseek"
+				: isZai
+					? "zai"
+					: isTogether && !isTogetherReasoningOnly
+						? "together"
+						: isAntLing
+							? "ant-ling"
+							: isOpenRouter
+								? "openrouter"
+								: "openai",
 		openRouterRouting: {},
 		vercelGatewayRouting: {},
 		chatTemplateKwargs: {},
@@ -386,7 +392,9 @@ function detectOpenAICompletionsCompat(model: Model<"openai-completions">): Open
 			isCloudflareWorkersAI ||
 			isCloudflareAiGateway ||
 			isNvidia ||
-			isAntLing
+			isAntLing ||
+			isStepfun ||
+			isAgnes
 		),
 	};
 }
@@ -1579,20 +1587,28 @@ async function loadModelsDevData(): Promise<Model<any>[]> {
 		] as const;
 
 		// Model definitions based on official documentation and verification
-		// Note: Pricing is in CNY (¥), different from other providers (USD)
+		// Note: StepFun official pricing is in CNY (¥), converted to USD for consistency
+		// Conversion rate: 1 USD ≈ 7.2 CNY (approximate)
+		// step-3.7-flash: ¥1.35/¥8.10/¥0.27 → $0.19/$1.13/$0.04
+		// step-3.5-flash: ¥0.70/¥2.10/¥0.14 → $0.10/$0.29/$0.02
 		const stepfunModels = [
 			{
 				id: "step-3.7-flash",
 				name: "Step 3.7 Flash",
 				input: ["text", "image"] as const,
 				reasoning: true,
-				cost: { input: 1.35, output: 8.10, cacheRead: 0.27, cacheWrite: 0 },
+				cost: { input: 0.19, output: 1.13, cacheRead: 0.04, cacheWrite: 0 },
 				contextWindow: 262144,
 				maxTokens: 250000,
 				compat: {
+					supportsStore: false,
+					supportsDeveloperRole: false,
+					supportsReasoningEffort: true,
+					maxTokensField: "max_tokens",
 					requiresReasoningContentOnAssistantMessages: true,
 					thinkingFormat: "deepseek",
-					supportsReasoningEffort: true,
+					supportsStrictMode: false,
+					supportsLongCacheRetention: false,
 				},
 			},
 			{
@@ -1600,13 +1616,18 @@ async function loadModelsDevData(): Promise<Model<any>[]> {
 				name: "Step 3.5 Flash",
 				input: ["text"] as const,
 				reasoning: true,
-				cost: { input: 0.70, output: 2.10, cacheRead: 0.14, cacheWrite: 0 },
+				cost: { input: 0.10, output: 0.29, cacheRead: 0.02, cacheWrite: 0 },
 				contextWindow: 262144,
 				maxTokens: 250000,
 				compat: {
+					supportsStore: false,
+					supportsDeveloperRole: false,
+					supportsReasoningEffort: false,
+					maxTokensField: "max_tokens",
 					requiresReasoningContentOnAssistantMessages: true,
 					thinkingFormat: "deepseek",
-					supportsReasoningEffort: false,
+					supportsStrictMode: false,
+					supportsLongCacheRetention: false,
 				},
 			},
 			{
@@ -1614,13 +1635,18 @@ async function loadModelsDevData(): Promise<Model<any>[]> {
 				name: "Step 3.5 Flash 2603",
 				input: ["text"] as const,
 				reasoning: true,
-				cost: { input: 0.70, output: 2.10, cacheRead: 0.14, cacheWrite: 0 },
+				cost: { input: 0.10, output: 0.29, cacheRead: 0.02, cacheWrite: 0 },
 				contextWindow: 262144,
 				maxTokens: 250000,
 				compat: {
+					supportsStore: false,
+					supportsDeveloperRole: false,
+					supportsReasoningEffort: true,
+					maxTokensField: "max_tokens",
 					requiresReasoningContentOnAssistantMessages: true,
 					thinkingFormat: "deepseek",
-					supportsReasoningEffort: true,
+					supportsStrictMode: false,
+					supportsLongCacheRetention: false,
 				},
 			},
 		] as const;
@@ -1637,9 +1663,14 @@ async function loadModelsDevData(): Promise<Model<any>[]> {
 			contextWindow: 1048576,
 			maxTokens: 393216,
 			compat: {
+				supportsStore: false,
+				supportsDeveloperRole: false,
+				supportsReasoningEffort: false,
+				maxTokensField: "max_tokens",
 				requiresReasoningContentOnAssistantMessages: true,
 				thinkingFormat: "deepseek",
-				supportsReasoningEffort: false,
+				supportsStrictMode: false,
+				supportsLongCacheRetention: false,
 			},
 		} as const;
 

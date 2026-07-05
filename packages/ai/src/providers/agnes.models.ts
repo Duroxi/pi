@@ -10,6 +10,7 @@ export const AGNES_MODELS = {
 		api: "openai-completions",
 		provider: "agnes",
 		baseUrl: "https://apihub.agnes-ai.com/v1",
+		compat: {"supportsStore":false,"supportsDeveloperRole":false,"supportsReasoningEffort":false,"maxTokensField":"max_tokens","supportsLongCacheRetention":false},
 		reasoning: false,
 		input: ["text", "image"],
 		cost: {

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { OpenAICompletionsCompat } from "../src/types.ts";
 import { STEPFUN_MODELS } from "../src/providers/stepfun.models.ts";
 import { STEPFUN_STEP_PLAN_MODELS } from "../src/providers/stepfun-step-plan.models.ts";
 
@@ -78,36 +79,36 @@ describe("StepFun models", () => {
 		it("step-3.7-flash supports reasoning_effort", () => {
 			const model = STEPFUN_MODELS["step-3.7-flash"];
 			expect(model.compat).toBeDefined();
-			expect((model.compat as any).supportsReasoningEffort).toBe(true);
+			expect((model.compat as OpenAICompletionsCompat).supportsReasoningEffort).toBe(true);
 		});
 
 		it("step-3.5-flash does not support reasoning_effort", () => {
 			const model = STEPFUN_MODELS["step-3.5-flash"];
 			expect(model.compat).toBeDefined();
-			expect((model.compat as any).supportsReasoningEffort).toBe(false);
+			expect((model.compat as OpenAICompletionsCompat).supportsReasoningEffort).toBe(false);
 		});
 
 		it("step-3.5-flash-2603 supports reasoning_effort", () => {
 			const model = STEPFUN_MODELS["step-3.5-flash-2603"];
 			expect(model.compat).toBeDefined();
-			expect((model.compat as any).supportsReasoningEffort).toBe(true);
+			expect((model.compat as OpenAICompletionsCompat).supportsReasoningEffort).toBe(true);
 		});
 
 		it("step-router-v1 does not support reasoning_effort", () => {
 			const model = STEPFUN_STEP_PLAN_MODELS["step-router-v1"];
 			expect(model.compat).toBeDefined();
-			expect((model.compat as any).supportsReasoningEffort).toBe(false);
+			expect((model.compat as OpenAICompletionsCompat).supportsReasoningEffort).toBe(false);
 		});
 
 		it("all stepfun models use deepseek thinkingFormat", () => {
 			for (const model of Object.values(STEPFUN_MODELS)) {
-				expect((model.compat as any).thinkingFormat).toBe("deepseek");
+				expect((model.compat as OpenAICompletionsCompat).thinkingFormat).toBe("deepseek");
 			}
 		});
 
 		it("all stepfun models require reasoning content on assistant messages", () => {
 			for (const model of Object.values(STEPFUN_MODELS)) {
-				expect((model.compat as any).requiresReasoningContentOnAssistantMessages).toBe(true);
+				expect((model.compat as OpenAICompletionsCompat).requiresReasoningContentOnAssistantMessages).toBe(true);
 			}
 		});
 	});
@@ -115,16 +116,16 @@ describe("StepFun models", () => {
 	describe("pricing", () => {
 		it("step-3.7-flash has correct pricing", () => {
 			const model = STEPFUN_MODELS["step-3.7-flash"];
-			expect(model.cost.input).toBe(1.35);
-			expect(model.cost.output).toBe(8.1);
-			expect(model.cost.cacheRead).toBe(0.27);
+			expect(model.cost.input).toBe(0.19);
+			expect(model.cost.output).toBe(1.13);
+			expect(model.cost.cacheRead).toBe(0.04);
 		});
 
 		it("step-3.5-flash has correct pricing", () => {
 			const model = STEPFUN_MODELS["step-3.5-flash"];
-			expect(model.cost.input).toBe(0.7);
-			expect(model.cost.output).toBe(2.1);
-			expect(model.cost.cacheRead).toBe(0.14);
+			expect(model.cost.input).toBe(0.1);
+			expect(model.cost.output).toBe(0.29);
+			expect(model.cost.cacheRead).toBe(0.02);
 		});
 
 		it("step-3.5-flash-2603 has same pricing as step-3.5-flash", () => {
@@ -189,36 +190,36 @@ describe("StepFun models", () => {
 		it("step-3.7-flash supports reasoning_effort", () => {
 			const model = STEPFUN_STEP_PLAN_MODELS["step-3.7-flash"];
 			expect(model.compat).toBeDefined();
-			expect((model.compat as any).supportsReasoningEffort).toBe(true);
+			expect((model.compat as OpenAICompletionsCompat).supportsReasoningEffort).toBe(true);
 		});
 
 		it("step-3.5-flash does not support reasoning_effort", () => {
 			const model = STEPFUN_STEP_PLAN_MODELS["step-3.5-flash"];
 			expect(model.compat).toBeDefined();
-			expect((model.compat as any).supportsReasoningEffort).toBe(false);
+			expect((model.compat as OpenAICompletionsCompat).supportsReasoningEffort).toBe(false);
 		});
 
 		it("step-3.5-flash-2603 supports reasoning_effort", () => {
 			const model = STEPFUN_STEP_PLAN_MODELS["step-3.5-flash-2603"];
 			expect(model.compat).toBeDefined();
-			expect((model.compat as any).supportsReasoningEffort).toBe(true);
+			expect((model.compat as OpenAICompletionsCompat).supportsReasoningEffort).toBe(true);
 		});
 
 		it("step-router-v1 does not support reasoning_effort", () => {
 			const model = STEPFUN_STEP_PLAN_MODELS["step-router-v1"];
 			expect(model.compat).toBeDefined();
-			expect((model.compat as any).supportsReasoningEffort).toBe(false);
+			expect((model.compat as OpenAICompletionsCompat).supportsReasoningEffort).toBe(false);
 		});
 
 		it("all stepfun-step-plan models use deepseek thinkingFormat", () => {
 			for (const model of Object.values(STEPFUN_STEP_PLAN_MODELS)) {
-				expect((model.compat as any).thinkingFormat).toBe("deepseek");
+				expect((model.compat as OpenAICompletionsCompat).thinkingFormat).toBe("deepseek");
 			}
 		});
 
 		it("all stepfun-step-plan models require reasoning content on assistant messages", () => {
 			for (const model of Object.values(STEPFUN_STEP_PLAN_MODELS)) {
-				expect((model.compat as any).requiresReasoningContentOnAssistantMessages).toBe(true);
+				expect((model.compat as OpenAICompletionsCompat).requiresReasoningContentOnAssistantMessages).toBe(true);
 			}
 		});
 	});
