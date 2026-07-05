@@ -156,4 +156,88 @@ describe("StepFun models", () => {
 			}
 		});
 	});
+
+	describe("API type", () => {
+		it("all stepfun models use openai-completions API", () => {
+			for (const model of Object.values(STEPFUN_MODELS)) {
+				expect(model.api).toBe("openai-completions");
+			}
+		});
+
+		it("all stepfun-step-plan models use openai-completions API", () => {
+			for (const model of Object.values(STEPFUN_STEP_PLAN_MODELS)) {
+				expect(model.api).toBe("openai-completions");
+			}
+		});
+	});
+
+	describe("provider ID", () => {
+		it("all stepfun models have correct provider ID", () => {
+			for (const model of Object.values(STEPFUN_MODELS)) {
+				expect(model.provider).toBe("stepfun");
+			}
+		});
+
+		it("all stepfun-step-plan models have correct provider ID", () => {
+			for (const model of Object.values(STEPFUN_STEP_PLAN_MODELS)) {
+				expect(model.provider).toBe("stepfun-step-plan");
+			}
+		});
+	});
+
+	describe("stepfun-step-plan compatibility settings", () => {
+		it("step-3.7-flash supports reasoning_effort", () => {
+			const model = STEPFUN_STEP_PLAN_MODELS["step-3.7-flash"];
+			expect(model.compat).toBeDefined();
+			expect((model.compat as any).supportsReasoningEffort).toBe(true);
+		});
+
+		it("step-3.5-flash does not support reasoning_effort", () => {
+			const model = STEPFUN_STEP_PLAN_MODELS["step-3.5-flash"];
+			expect(model.compat).toBeDefined();
+			expect((model.compat as any).supportsReasoningEffort).toBe(false);
+		});
+
+		it("step-3.5-flash-2603 supports reasoning_effort", () => {
+			const model = STEPFUN_STEP_PLAN_MODELS["step-3.5-flash-2603"];
+			expect(model.compat).toBeDefined();
+			expect((model.compat as any).supportsReasoningEffort).toBe(true);
+		});
+
+		it("step-router-v1 does not support reasoning_effort", () => {
+			const model = STEPFUN_STEP_PLAN_MODELS["step-router-v1"];
+			expect(model.compat).toBeDefined();
+			expect((model.compat as any).supportsReasoningEffort).toBe(false);
+		});
+
+		it("all stepfun-step-plan models use deepseek thinkingFormat", () => {
+			for (const model of Object.values(STEPFUN_STEP_PLAN_MODELS)) {
+				expect((model.compat as any).thinkingFormat).toBe("deepseek");
+			}
+		});
+
+		it("all stepfun-step-plan models require reasoning content on assistant messages", () => {
+			for (const model of Object.values(STEPFUN_STEP_PLAN_MODELS)) {
+				expect((model.compat as any).requiresReasoningContentOnAssistantMessages).toBe(true);
+			}
+		});
+	});
+
+	describe("model names", () => {
+		it("step-3.7-flash has correct name", () => {
+			expect(STEPFUN_MODELS["step-3.7-flash"].name).toBe("Step 3.7 Flash");
+		});
+
+		it("step-3.5-flash has correct name", () => {
+			expect(STEPFUN_MODELS["step-3.5-flash"].name).toBe("Step 3.5 Flash");
+		});
+
+		it("step-3.5-flash-2603 has correct name", () => {
+			expect(STEPFUN_MODELS["step-3.5-flash-2603"].name).toBe("Step 3.5 Flash 2603");
+		});
+
+		it("step-router-v1 has correct name", () => {
+			expect(STEPFUN_STEP_PLAN_MODELS["step-router-v1"].name).toBe("Step Router V1");
+		});
+	});
 });
