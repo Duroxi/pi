@@ -34,4 +34,5 @@ export const BUILT_IN_PROVIDER_DISPLAY_NAMES: Record<string, string> = {
 	"xiaomi-token-plan-sgp": "Xiaomi MiMo Token Plan (Singapore)",
 	stepfun: "StepFun",
 	"stepfun-step-plan": "StepFun Step Plan",
+	agnes: "Agnes AI",
 };

@@ -105,6 +105,7 @@ function getApiKeyEnvVars(provider: string): readonly string[] | undefined {
 		"xiaomi-token-plan-sgp": "XIAOMI_TOKEN_PLAN_SGP_API_KEY",
 		stepfun: "STEPFUN_API_KEY",
 		"stepfun-step-plan": "STEPFUN_STEP_PLAN_API_KEY",
+		agnes: "AGNES_API_KEY",
 	};
 
 	const envVar = envMap[provider];

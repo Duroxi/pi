@@ -49,6 +49,7 @@ export const defaultModelPerProvider: Record<KnownProvider, string> = {
 	"xiaomi-token-plan-sgp": "mimo-v2.5-pro",
 	stepfun: "step-3.7-flash",
 	"stepfun-step-plan": "step-3.7-flash",
+	agnes: "agnes-2.0-flash",
 };
 
 export interface ScopedModel {

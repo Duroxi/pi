@@ -368,6 +368,7 @@ ${chalk.bold("Environment Variables:")}
   XIAOMI_TOKEN_PLAN_SGP_API_KEY    - Xiaomi MiMo Token Plan API key (Singapore region)
   STEPFUN_API_KEY                  - StepFun API key (api.stepfun.com)
   STEPFUN_STEP_PLAN_API_KEY        - StepFun Step Plan API key (api.stepfun.com/step_plan)
+  AGNES_API_KEY                    - Agnes AI API key (apihub.agnes-ai.com)
   AWS_PROFILE                      - AWS profile for Amazon Bedrock
   AWS_ACCESS_KEY_ID                - AWS access key for Amazon Bedrock
   AWS_SECRET_ACCESS_KEY            - AWS secret key for Amazon Bedrock

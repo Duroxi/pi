@@ -1678,6 +1678,43 @@ async function loadModelsDevData(): Promise<Model<any>[]> {
 			}
 		}
 
+		// Process Agnes AI models
+		// Agnes AI uses OpenAI-compatible API
+		// Conservative approach: no thinking mode configuration due to documentation uncertainty
+		const agnesModels = [
+			{
+				id: "agnes-2.0-flash",
+				name: "Agnes 2.0 Flash",
+				input: ["text", "image"] as const,
+				reasoning: false,  // Conservative: disable reasoning to avoid sending unknown parameters
+				cost: { input: 0.03, output: 0.15, cacheRead: 0, cacheWrite: 0 },
+				contextWindow: 524288,  // 512K
+				maxTokens: 65536,
+				// No compat settings - conservative approach
+			},
+		] as const;
+
+		const agnesVariants = [
+			{ provider: "agnes", baseUrl: "https://apihub.agnes-ai.com/v1" },
+		] as const;
+
+		for (const { provider, baseUrl } of agnesVariants) {
+			for (const model of agnesModels) {
+				models.push({
+					id: model.id,
+					name: model.name,
+					api: "openai-completions",
+					provider,
+					baseUrl,
+					reasoning: model.reasoning,
+					input: [...model.input],
+					cost: { ...model.cost },
+					contextWindow: model.contextWindow,
+					maxTokens: model.maxTokens,
+				});
+			}
+		}
+
 		console.log(`Loaded ${models.length} tool-capable models from models.dev`);
 		return models;
 	} catch (error) {
