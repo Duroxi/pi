@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { OpenAICompletionsCompat } from "../src/types.ts";
 import { AGNES_MODELS } from "../src/providers/agnes.models.ts";
 
 describe("Agnes AI models", () => {
@@ -58,11 +59,11 @@ describe("Agnes AI models", () => {
 			const model = AGNES_MODELS["agnes-2.0-flash"];
 			// Auto-detected compat settings for Agnes (non-standard provider)
 			expect(model.compat).toBeDefined();
-			expect((model.compat as any).supportsStore).toBe(false);
-			expect((model.compat as any).supportsDeveloperRole).toBe(false);
-			expect((model.compat as any).supportsReasoningEffort).toBe(false);
-			expect((model.compat as any).maxTokensField).toBe("max_tokens");
-			expect((model.compat as any).supportsLongCacheRetention).toBe(false);
+			expect((model.compat as OpenAICompletionsCompat).supportsStore).toBe(false);
+			expect((model.compat as OpenAICompletionsCompat).supportsDeveloperRole).toBe(false);
+			expect((model.compat as OpenAICompletionsCompat).supportsReasoningEffort).toBe(false);
+			expect((model.compat as OpenAICompletionsCompat).maxTokensField).toBe("max_tokens");
+			expect((model.compat as OpenAICompletionsCompat).supportsLongCacheRetention).toBe(false);
 		});
 	});
 
