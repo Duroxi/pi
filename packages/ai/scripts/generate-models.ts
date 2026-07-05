@@ -1569,6 +1569,115 @@ async function loadModelsDevData(): Promise<Model<any>[]> {
 			}
 		}
 
+		// Process StepFun models
+		// StepFun has two access modes: regular API (pay-per-use) and Step Plan (subscription)
+		// - Regular API: supports step-3.7-flash, step-3.5-flash, step-3.5-flash-2603
+		// - Step Plan: additionally supports step-router-v1
+		const stepfunVariants = [
+			{ provider: "stepfun", baseUrl: "https://api.stepfun.com/v1" },
+			{ provider: "stepfun-step-plan", baseUrl: "https://api.stepfun.com/step_plan/v1" },
+		] as const;
+
+		// Model definitions based on official documentation and verification
+		// Note: Pricing is in CNY (¥), different from other providers (USD)
+		const stepfunModels = [
+			{
+				id: "step-3.7-flash",
+				name: "Step 3.7 Flash",
+				input: ["text", "image"] as const,
+				reasoning: true,
+				cost: { input: 1.35, output: 8.10, cacheRead: 0.27, cacheWrite: 0 },
+				contextWindow: 262144,
+				maxTokens: 250000,
+				compat: {
+					requiresReasoningContentOnAssistantMessages: true,
+					thinkingFormat: "deepseek",
+					supportsReasoningEffort: true,
+				},
+			},
+			{
+				id: "step-3.5-flash",
+				name: "Step 3.5 Flash",
+				input: ["text"] as const,
+				reasoning: true,
+				cost: { input: 0.70, output: 2.10, cacheRead: 0.14, cacheWrite: 0 },
+				contextWindow: 262144,
+				maxTokens: 250000,
+				compat: {
+					requiresReasoningContentOnAssistantMessages: true,
+					thinkingFormat: "deepseek",
+					supportsReasoningEffort: false,
+				},
+			},
+			{
+				id: "step-3.5-flash-2603",
+				name: "Step 3.5 Flash 2603",
+				input: ["text"] as const,
+				reasoning: true,
+				cost: { input: 0.70, output: 2.10, cacheRead: 0.14, cacheWrite: 0 },
+				contextWindow: 262144,
+				maxTokens: 250000,
+				compat: {
+					requiresReasoningContentOnAssistantMessages: true,
+					thinkingFormat: "deepseek",
+					supportsReasoningEffort: true,
+				},
+			},
+		] as const;
+
+		// step-router-v1 is only available in Step Plan
+		// It's an intelligent routing model that selects between DeepSeek-V4-Pro and step-3.5-flash
+		// Pricing: based on the actual model hit
+		const stepRouterV1 = {
+			id: "step-router-v1",
+			name: "Step Router V1",
+			input: ["text"] as const,
+			reasoning: true,
+			cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+			contextWindow: 1048576,
+			maxTokens: 393216,
+			compat: {
+				requiresReasoningContentOnAssistantMessages: true,
+				thinkingFormat: "deepseek",
+				supportsReasoningEffort: false,
+			},
+		} as const;
+
+		for (const { provider, baseUrl } of stepfunVariants) {
+			for (const model of stepfunModels) {
+				models.push({
+					id: model.id,
+					name: model.name,
+					api: "openai-completions",
+					provider,
+					baseUrl,
+					compat: model.compat,
+					reasoning: model.reasoning,
+					input: [...model.input],
+					cost: { ...model.cost },
+					contextWindow: model.contextWindow,
+					maxTokens: model.maxTokens,
+				});
+			}
+
+			// step-router-v1 is only available in Step Plan
+			if (provider === "stepfun-step-plan") {
+				models.push({
+					id: stepRouterV1.id,
+					name: stepRouterV1.name,
+					api: "openai-completions",
+					provider,
+					baseUrl,
+					compat: stepRouterV1.compat,
+					reasoning: stepRouterV1.reasoning,
+					input: [...stepRouterV1.input],
+					cost: { ...stepRouterV1.cost },
+					contextWindow: stepRouterV1.contextWindow,
+					maxTokens: stepRouterV1.maxTokens,
+				});
+			}
+		}
+
 		console.log(`Loaded ${models.length} tool-capable models from models.dev`);
 		return models;
 	} catch (error) {

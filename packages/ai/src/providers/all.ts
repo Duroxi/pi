@@ -36,6 +36,8 @@ import { xiaomiProvider } from "./xiaomi.ts";
 import { xiaomiTokenPlanAmsProvider } from "./xiaomi-token-plan-ams.ts";
 import { xiaomiTokenPlanCnProvider } from "./xiaomi-token-plan-cn.ts";
 import { xiaomiTokenPlanSgpProvider } from "./xiaomi-token-plan-sgp.ts";
+import { stepfunProvider } from "./stepfun.ts";
+import { stepfunStepPlanProvider } from "./stepfun-step-plan.ts";
 import { zaiProvider } from "./zai.ts";
 import { zaiCodingCnProvider } from "./zai-coding-cn.ts";
 
@@ -102,6 +104,8 @@ export function builtinProviders(): Provider[] {
 		xiaomiTokenPlanAmsProvider(),
 		xiaomiTokenPlanCnProvider(),
 		xiaomiTokenPlanSgpProvider(),
+		stepfunProvider(),
+		stepfunStepPlanProvider(),
 		zaiProvider(),
 		zaiCodingCnProvider(),
 	];
