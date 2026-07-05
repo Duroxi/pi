@@ -219,8 +219,8 @@ export const TOGETHER_MODELS = {
 		reasoning: false,
 		input: ["text"],
 		cost: {
-			input: 1.04,
-			output: 1.04,
+			input: 0.88,
+			output: 0.88,
 			cacheRead: 0,
 			cacheWrite: 0,
 		},
